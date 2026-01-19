@@ -1,111 +1,62 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-
 # More GitHub Actions for Azure: https://github.com/Azure/actions
  
 name: Build and deploy JAR app to Azure Web App - VistagramBackend
  
 on:
-
   push:
-
     branches:
-
       - main
-
   workflow_dispatch:
  
-env:
-
-  BACKEND_DIR: BACKEND_ORDNER_HIER_EINTRAGEN
- 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     permissions:
-
       contents: read
  
     steps:
-
       - uses: actions/checkout@v4
  
       - name: Set up Java version
-
         uses: actions/setup-java@v4
-
         with:
-
           java-version: '21'
-
           distribution: 'microsoft'
  
       - name: Build with Maven
-
-        working-directory: ${{ env.BACKEND_DIR }}
-
-        run: mvn -B clean package -DskipTests
+        run: mvn clean install
+        working-directory: ./VistagramBackend
  
       - name: Upload artifact for deployment job
-
         uses: actions/upload-artifact@v4
-
         with:
-
           name: java-app
-
-          path: '${{ github.workspace }}/${{ env.BACKEND_DIR }}/target/*.jar'
+          path: ./VistagramBackend/target/*.jar
  
   deploy:
-
     runs-on: ubuntu-latest
-
     needs: build
-
     permissions:
-
       id-token: write
-
       contents: read
  
     steps:
-
       - name: Download artifact from build job
-
         uses: actions/download-artifact@v4
-
         with:
-
           name: java-app
  
       - name: Login to Azure
-
         uses: azure/login@v2
-
         with:
-
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7A163BA2BA0345E28ACDE83EDCD812CE }}
-
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_93AA80A144F046149EEDEB170185411B }}
-
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_60C2CF826FAE4A7EB75893C54CDB205F }}
  
       - name: Deploy to Azure Web App
-
-        id: deploy-to-webapp
-
         uses: azure/webapps-deploy@v3
-
         with:
-
           app-name: 'VistagramBackend'
-
           slot-name: 'Production'
-
           package: '*.jar'
-
-GitHub - Azure/actions: Author and use Azure Actions to automate your GitHub workflows
-Author and use Azure Actions to automate your GitHub workflows - Azure/actions
- 
